@@ -1,4 +1,4 @@
-import execa from 'execa';
+import execa from "execa";
 
 export async function runCommand(
   command: string,
@@ -7,7 +7,20 @@ export async function runCommand(
 ): Promise<void> {
   await execa(command, args, {
     cwd,
-    stdio: 'inherit',
+    stdio: "inherit",
+  });
+}
+
+export async function runCommandWithInput(
+  command: string,
+  args: string[],
+  cwd: string,
+  input: string
+): Promise<void> {
+  await execa(command, args, {
+    cwd,
+    input,
+    stdio: ["pipe", "inherit", "inherit"],
   });
 }
 

@@ -28,7 +28,10 @@ program
     try {
       await createExpoApp(projectName, options);
     } catch (error) {
-      console.error(chalk.red('\n✖ Error:'), error instanceof Error ? error.message : error);
+      console.error(
+        chalk.red('\n✖ Error:'),
+        error instanceof Error ? error.message : error,
+      );
       process.exit(1);
     }
   });
