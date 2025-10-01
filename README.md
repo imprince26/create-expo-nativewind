@@ -1,17 +1,17 @@
 # Create Expo NativeWind
 
-A CLI tool to create Expo apps with optional NativeWind (TailwindCSS) setup. Get started with a production-ready Expo + NativeWind app in seconds! 🚀
+A CLI tool to create Expo apps with optional NativeWind (TailwindCSS) setup. Get started with a production-ready Expo + NativeWind app in seconds!
 
-## ✨ Features
+## Features
 
-- 🎨 **Optional NativeWind Setup** - Instantly set up TailwindCSS for React Native 
-- 📦 **Multiple Package Managers** - Support for npm, yarn, and pnpm
-- 🎯 **Interactive CLI** - Beautiful, user-friendly prompts
-- ⚡ **Fast & Reliable** - Optimized setup process
-- 🛠️ **Fully Configured** - Everything you need to start coding immediately
-- 📱 **TypeScript Ready** - Full TypeScript support out of the box
+- **Optional NativeWind Setup** - Instantly set up TailwindCSS for React Native 
+- **Multiple Package Managers** - Support for npm, yarn, and pnpm
+- **Interactive CLI** - Beautiful, user-friendly prompts
+- **Fast & Reliable** - Optimized setup process
+- **Fully Configured** - Everything you need to start coding immediately
+- **TypeScript Ready** - Full TypeScript support out of the box
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Create a new app with NativeWind
 
@@ -31,7 +31,7 @@ npx create-expo-nativewind my-app
 npx create-expo-nativewind my-app
 ```
 
-## 📖 Usage
+## Usage
 
 ```bash
 npx create-expo-nativewind [project-name] [options]
@@ -54,32 +54,35 @@ npx create-expo-nativewind [project-name] [options]
 ### Examples
 
 Create app with NativeWind using yarn:
+
 ```bash
 npx create-expo-nativewind my-app --nativewind --yarn
 ```
 
 Create app with specific template:
+
 ```bash
 npx create-expo-nativewind my-app --template tabs
 ```
 
 Create app without installing dependencies:
+
 ```bash
 npx create-expo-nativewind my-app --no-install
 ```
 
-## 🎨 What's Included with NativeWind?
+## What's Included with NativeWind?
 
 When you use the `--nativewind` flag, your project will be configured with:
 
-- ✅ **Expo Default Template** - Starts with full Expo default template (app router structure)
-- ✅ **Installation Instructions** - Optional prompt showing Expo setup instructions
-- ✅ **NativeWind v4** - Latest version of NativeWind with modern architecture
-- ✅ **TailwindCSS 3.3.0** - Full Tailwind configuration optimized for React Native
-- ✅ **Pre-configured Metro** - Metro bundler setup for NativeWind v4
-- ✅ **Babel Config** - Babel plugins configured for optimal performance
-- ✅ **Global Styles** - Ready-to-use global CSS file
-- ✅ **Updated Components** - Home screen updated with NativeWind examples
+- **Expo Default Template** - Starts with full Expo default template (app router structure)
+- **Installation Instructions** - Optional prompt showing Expo setup instructions
+- **NativeWind v4** - Latest version of NativeWind with modern architecture
+- **TailwindCSS 3.3.0** - Full Tailwind configuration optimized for React Native
+- **Pre-configured Metro** - Metro bundler setup for NativeWind v4
+- **Babel Config** - Babel plugins configured for optimal performance
+- **Global Styles** - Ready-to-use global CSS file
+- **Updated Components** - Home screen updated with NativeWind examples
 
 ### Using Tailwind Classes
 
@@ -99,7 +102,7 @@ export default function App() {
 }
 ```
 
-## 🔧 Development
+## Development
 
 After creating your app:
 
@@ -109,22 +112,23 @@ npm start
 ```
 
 Then:
+
 - Press `a` for Android
 - Press `i` for iOS
 - Press `w` for Web
 
-## 📚 Resources
+## Resources
 
 - [Expo Documentation](https://docs.expo.dev)
 - [NativeWind Documentation](https://www.nativewind.dev)
 - [TailwindCSS Documentation](https://tailwindcss.com)
 - [React Native Documentation](https://reactnative.dev)
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Expo](https://expo.dev) - Amazing React Native framework
 - [NativeWind](https://www.nativewind.dev) - TailwindCSS for React Native
