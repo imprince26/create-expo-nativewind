@@ -14,10 +14,6 @@ export async function setupNativeWind(
   console.log("");
 
   // Install NativeWind dependencies
-  const spinner = ora({
-    text: chalk.bold("Installing NativeWind v4 and dependencies..."),
-    color: "cyan",
-  }).start();
   try {
     await addDependencies(
       projectPath,
@@ -27,17 +23,19 @@ export async function setupNativeWind(
         "react-native-reanimated@~3.17.4",
         "react-native-safe-area-context@5.4.0",
       ],
-      false
+      false,
+      true
     );
     await addDependencies(
       projectPath,
       packageManager,
       ["tailwindcss@^3.4.17", "prettier-plugin-tailwindcss@^0.5.11"],
+      true,
       true
     );
-    spinner.succeed(chalk.green("Dependencies installed successfully"));
+    console.log(chalk.green("\n  ✓ Dependencies installed successfully\n"));
   } catch (error) {
-    spinner.fail(chalk.red("Failed to install dependencies"));
+    console.log(chalk.red("\n  ✗ Failed to install dependencies\n"));
     throw error;
   }
 

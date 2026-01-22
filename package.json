@@ -1,6 +1,6 @@
 {
   "name": "create-expo-nativewind",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Prince Patel <patelprince.webdev@gmail.com>",
   "description": "A CLI tool to create Expo project with optional NativeWind setup",
   "main": "dist/index.js",
@@ -11,7 +11,12 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "prepublishOnly": "npm run build"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:unit": "jest --testPathPattern=tests/__tests__/utils",
+    "test:integration": "jest --testPathPattern=tests/__tests__/integration",
+    "prepublishOnly": "npm run build && npm run test"
   },
   "keywords": [
     "expo",
@@ -50,10 +55,15 @@
     "validate-npm-package-name": "^5.0.0"
   },
   "devDependencies": {
+    "@jest/globals": "^30.2.0",
     "@types/fs-extra": "^11.0.4",
     "@types/inquirer": "^9.0.7",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.6.0",
     "@types/validate-npm-package-name": "^4.0.2",
+    "jest": "^30.2.0",
+    "log-update": "^7.0.2",
+    "ts-jest": "^29.4.6",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.2"
   }

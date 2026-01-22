@@ -5,7 +5,11 @@ import path from "path";
 import fs from "fs-extra";
 import validateNpmPackageName from "validate-npm-package-name";
 import { detectPackageManager } from "../utils/packageManager";
-import { runCommand, runCommandWithInput } from "../utils/command";
+import {
+  runCommand,
+  runCommandWithInput,
+  runCommandWithCollapsibleOutput,
+} from "../utils/command";
 import { setupNativeWind } from "../utils/nativewind";
 import { createGitRepository } from "../utils/git";
 import { displaySuccess } from "../utils/messages";
@@ -209,20 +213,29 @@ export async function createExpoApp(
         ? "create-expo-app@latest"
         : `create-expo-app@${expoVersion}`;
 
+    spinner.stop();
+
     if (useNativeWind) {
       // For NativeWind setup, use default Expo installation (no template specified)
-      await runCommand("npx", [expoPackage, name], process.cwd());
+      await runCommandWithCollapsibleOutput(
+        "npx",
+        [expoPackage, name],
+        process.cwd(),
+        "Installing Expo dependencies..."
+      );
     } else {
       // For non-NativeWind setup, use specified template
-      await runCommand(
+      await runCommandWithCollapsibleOutput(
         "npx",
         [expoPackage, name, "--template", template],
-        process.cwd()
+        process.cwd(),
+        "Installing Expo dependencies..."
       );
     }
-    spinner.succeed(chalk.green("Expo project created successfully"));
+
+    console.log(chalk.green("\n  ✓ Expo project created successfully\n"));
   } catch (error) {
-    spinner.fail(chalk.red("Failed to create Expo project"));
+    console.log(chalk.red("\n  ✗ Failed to create Expo project\n"));
     throw error;
   }
 

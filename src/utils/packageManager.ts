@@ -1,4 +1,4 @@
-import { runCommand } from "./command";
+import { runCommand, runCommandWithCollapsibleOutput } from "./command";
 
 export type PackageManager = "npm" | "yarn" | "pnpm" | "bun";
 
@@ -56,7 +56,8 @@ export async function addDependencies(
   projectPath: string,
   packageManager: PackageManager,
   dependencies: string[],
-  dev = false
+  dev = false,
+  useCollapsible = true
 ) {
   const commands: Record<PackageManager, string[]> = {
     npm: ["install", dev ? "--save-dev" : "--save", ...dependencies],
@@ -65,5 +66,17 @@ export async function addDependencies(
     bun: ["add", dev ? "--dev" : "", ...dependencies].filter(Boolean),
   };
 
-  await runCommand(packageManager, commands[packageManager], projectPath);
+  const depType = dev ? "dev dependencies" : "dependencies";
+  const description = `Installing ${dependencies.length} ${depType}...`;
+
+  if (useCollapsible) {
+    await runCommandWithCollapsibleOutput(
+      packageManager,
+      commands[packageManager],
+      projectPath,
+      description
+    );
+  } else {
+    await runCommand(packageManager, commands[packageManager], projectPath);
+  }
 }
