@@ -4,13 +4,21 @@ import { PackageManager } from "./packageManager";
 export function displaySuccess(
   projectName: string,
   packageManager: PackageManager,
-  withNativeWind: boolean
+  withNativeWind: boolean,
+  depsInstalled: boolean = true
 ) {
   const commands: Record<PackageManager, string> = {
     npm: "npm start",
     yarn: "yarn start",
     pnpm: "pnpm start",
     bun: "bun start",
+  };
+
+  const installCommands: Record<PackageManager, string> = {
+    npm: "npm install",
+    yarn: "yarn install",
+    pnpm: "pnpm install",
+    bun: "bun install",
   };
 
   console.log("");
@@ -22,6 +30,11 @@ export function displaySuccess(
   if (projectName !== ".") {
     console.log(chalk.white(`  cd ${projectName}`));
   }
+  
+  if (!depsInstalled) {
+    console.log(chalk.white(`  ${installCommands[packageManager]}`));
+  }
+  
   console.log(chalk.white(`  ${commands[packageManager]}`));
   console.log("");
 

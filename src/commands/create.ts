@@ -6,13 +6,13 @@ import fs from "fs-extra";
 import validateNpmPackageName from "validate-npm-package-name";
 import { detectPackageManager } from "../utils/packageManager";
 import {
-  runCommand,
   runCommandWithInput,
-  runCommandWithCollapsibleOutput,
+  runCommandWithMessage,
 } from "../utils/command";
 import { setupNativeWind } from "../utils/nativewind";
 import { createGitRepository } from "../utils/git";
 import { displaySuccess } from "../utils/messages";
+import { CreateOptions } from "../types/options";
 
 // Helper function to create initial global.css
 async function createInitialGlobalCSS(projectPath: string) {
@@ -26,16 +26,6 @@ async function createInitialGlobalCSS(projectPath: string) {
   await fs.ensureDir(appDir);
 
   await fs.writeFile(path.join(appDir, "global.css"), css);
-}
-
-interface CreateOptions {
-  nativewind?: boolean;
-  template?: string;
-  npm?: boolean;
-  yarn?: boolean;
-  pnpm?: boolean;
-  install?: boolean;
-  git?: boolean;
 }
 
 export async function createExpoApp(
@@ -155,6 +145,38 @@ export async function createExpoApp(
   // Detect package manager
   const packageManager = detectPackageManager(options);
 
+  // Ask about dependency installation if not specified via flag
+  let shouldInstallDeps = true; // Default to true
+  
+  // Only skip prompt if user explicitly passed --no-install flag
+  if (options.install === false) {
+    shouldInstallDeps = false;
+  } else if (options.install === undefined) {
+    // If no flag was provided, ask the user
+    const installAnswer = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "installDependencies",
+        message: chalk.bold(
+          "Would you like to install dependencies automatically? (Recommended)"
+        ),
+        default: true,
+      },
+    ]);
+    shouldInstallDeps = installAnswer.installDependencies;
+    
+    // Show message if user chose not to install
+    if (!shouldInstallDeps) {
+      console.log(
+        chalk.dim(
+          "\n  You can install dependencies manually later using: " +
+            chalk.white(`${packageManager} install`) +
+            "\n"
+        )
+      );
+    }
+  }
+
   // Select template if NativeWind is not used
   let template = options.template || "blank";
   if (!useNativeWind && !options.template) {
@@ -199,6 +221,9 @@ export async function createExpoApp(
   console.log(
     chalk.dim(`  NativeWind:      ${useNativeWind ? "Yes" : "No"}`)
   );
+  console.log(
+    chalk.dim(`  Install Deps:    ${shouldInstallDeps ? "Yes" : "No (Manual)"}`)
+  );
   console.log(chalk.dim("  ────────────────────────────────────────"));
   console.log("");
 
@@ -215,21 +240,28 @@ export async function createExpoApp(
 
     spinner.stop();
 
+    const createArgs = [expoPackage, name];
+    
+    // Add --no-install flag if user chose not to install dependencies
+    if (!shouldInstallDeps) {
+      createArgs.push("--no-install");
+    }
+
     if (useNativeWind) {
       // For NativeWind setup, use default Expo installation (no template specified)
-      await runCommandWithCollapsibleOutput(
+      await runCommandWithMessage(
         "npx",
-        [expoPackage, name],
+        createArgs,
         process.cwd(),
-        "Installing Expo dependencies..."
+        "Creating Expo project with default template"
       );
     } else {
       // For non-NativeWind setup, use specified template
-      await runCommandWithCollapsibleOutput(
+      await runCommandWithMessage(
         "npx",
-        [expoPackage, name, "--template", template],
+        [...createArgs, "--template", template],
         process.cwd(),
-        "Installing Expo dependencies..."
+        `Creating Expo project with ${template} template`
       );
     }
 
@@ -305,8 +337,19 @@ export async function createExpoApp(
   }
 
   // Setup NativeWind
-  if (useNativeWind) {
+  if (useNativeWind && shouldInstallDeps) {
     await setupNativeWind(projectPath, packageManager);
+  } else if (useNativeWind && !shouldInstallDeps) {
+    console.log(
+      chalk.yellow(
+        "\n  ⚠ NativeWind setup skipped because dependency installation was skipped"
+      )
+    );
+    console.log(
+      chalk.dim(
+        "  You'll need to manually install NativeWind dependencies and configure it"
+      )
+    );
   }
 
   // Initialize git repository
@@ -324,5 +367,10 @@ export async function createExpoApp(
   }
 
   // Display success message
-  displaySuccess(isCurrentDir ? "." : name, packageManager, useNativeWind);
+  displaySuccess(
+    isCurrentDir ? "." : name,
+    packageManager,
+    useNativeWind,
+    shouldInstallDeps
+  );
 }

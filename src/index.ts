@@ -9,6 +9,32 @@ const packageJson = require('../package.json');
 
 const program = new Command();
 
+// Setup graceful termination handler for Ctrl+C
+let isTerminating = false;
+process.on('SIGINT', () => {
+  if (isTerminating) {
+    return;
+  }
+  isTerminating = true;
+  
+  console.log(chalk.yellow('\n\n  ⚠ Installation interrupted by user'));
+  console.log(chalk.dim('  Cleaning up and exiting...\n'));
+  
+  process.exit(130);
+});
+
+process.on('SIGTERM', () => {
+  if (isTerminating) {
+    return;
+  }
+  isTerminating = true;
+  
+  console.log(chalk.yellow('\n\n  ⚠ Installation terminated'));
+  console.log(chalk.dim('  Exiting...\n'));
+  
+  process.exit(143);
+});
+
 // Display banner
 displayBanner();
 
@@ -29,11 +55,13 @@ program
     try {
       await createExpoApp(projectName, options);
     } catch (error) {
-      console.error(
-        chalk.red('\n✖ Error:'),
-        error instanceof Error ? error.message : error,
-      );
-      process.exit(1);
+      if (!isTerminating) {
+        console.error(
+          chalk.red('\n✖ Error:'),
+          error instanceof Error ? error.message : error,
+        );
+        process.exit(1);
+      }
     }
   });
 
