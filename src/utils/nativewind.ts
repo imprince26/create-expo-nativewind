@@ -8,10 +8,12 @@ export async function setupNativeWind(
   projectPath: string,
   packageManager: PackageManager
 ) {
-  console.log(chalk.cyan("\n🎨 Setting up NativeWind...\n"));
+  console.log("");
+  console.log(chalk.bold.hex("#38BDF8")("Setting up NativeWind"));
+  console.log(chalk.dim("Configuring TailwindCSS for React Native..."));
+  console.log("");
 
   // Install NativeWind dependencies
-  const spinner = ora("Installing NativeWind v4 dependencies...").start();
   try {
     await addDependencies(
       projectPath,
@@ -21,77 +23,97 @@ export async function setupNativeWind(
         "react-native-reanimated@~3.17.4",
         "react-native-safe-area-context@5.4.0",
       ],
-      false
+      false,
+      true
     );
     await addDependencies(
       projectPath,
       packageManager,
       ["tailwindcss@^3.4.17", "prettier-plugin-tailwindcss@^0.5.11"],
+      true,
       true
     );
-    spinner.succeed("NativeWind v4 dependencies installed");
+    console.log(chalk.green("\n  ✓ Dependencies installed successfully\n"));
   } catch (error) {
-    spinner.fail("Failed to install NativeWind dependencies");
+    console.log(chalk.red("\n  ✗ Failed to install dependencies\n"));
     throw error;
   }
 
   // Create tailwind.config.js
-  const configSpinner = ora("Creating Tailwind configuration...").start();
+  const configSpinner = ora({
+    text: chalk.bold("Creating Tailwind configuration..."),
+    color: "cyan",
+  }).start();
   try {
     await createTailwindConfig(projectPath);
-    configSpinner.succeed("Tailwind configuration created");
+    configSpinner.succeed(chalk.green("Tailwind configuration created"));
   } catch (error) {
-    configSpinner.fail("Failed to create Tailwind configuration");
+    configSpinner.fail(chalk.red("Failed to create Tailwind configuration"));
     throw error;
   }
 
   // Update babel.config.js
-  const babelSpinner = ora("Updating Babel configuration...").start();
+  const babelSpinner = ora({
+    text: chalk.bold("Configuring Babel for NativeWind..."),
+    color: "cyan",
+  }).start();
   try {
     await updateBabelConfig(projectPath);
-    babelSpinner.succeed("Babel configuration updated");
+    babelSpinner.succeed(chalk.green("Babel configured successfully"));
   } catch (error) {
-    babelSpinner.fail("Failed to update Babel configuration");
+    babelSpinner.fail(chalk.red("Failed to configure Babel"));
     throw error;
   }
 
   // Update App.tsx
-  const appSpinner = ora("Updating App component...").start();
+  const appSpinner = ora({
+    text: chalk.bold("Creating welcome component..."),
+    color: "cyan",
+  }).start();
   try {
     await updateAppComponent(projectPath);
-    appSpinner.succeed("App component updated");
+    appSpinner.succeed(chalk.green("Welcome component created"));
   } catch (error) {
-    appSpinner.fail("Failed to update App component");
+    appSpinner.fail(chalk.red("Failed to update app component"));
     throw error;
   }
 
   // Update metro.config.js
-  const metroSpinner = ora("Updating Metro configuration...").start();
+  const metroSpinner = ora({
+    text: chalk.bold("Configuring Metro bundler..."),
+    color: "cyan",
+  }).start();
   try {
     await updateMetroConfig(projectPath);
-    metroSpinner.succeed("Metro configuration updated");
+    metroSpinner.succeed(chalk.green("Metro bundler configured"));
   } catch (error) {
-    metroSpinner.fail("Failed to update Metro configuration");
+    metroSpinner.fail(chalk.red("Failed to configure Metro"));
     throw error;
   }
 
   // Create TypeScript declarations
-  const typeSpinner = ora("Creating TypeScript declarations...").start();
+  const typeSpinner = ora({
+    text: chalk.bold("Setting up TypeScript declarations..."),
+    color: "cyan",
+  }).start();
   try {
     await createNativeWindTypes(projectPath);
-    typeSpinner.succeed("TypeScript declarations created");
+    typeSpinner.succeed(chalk.green("TypeScript declarations created"));
   } catch (error) {
-    typeSpinner.fail("Failed to create TypeScript declarations");
+    typeSpinner.fail(chalk.red("Failed to create TypeScript declarations"));
     throw error;
   }
 
   // Update app.json for Metro bundler
-  const appJsonSpinner = ora("Updating app.json configuration...").start();
+  const appJsonSpinner = ora({
+    text: chalk.bold("Updating app configuration..."),
+    color: "cyan",
+  }).start();
   try {
     await updateAppJson(projectPath);
-    appJsonSpinner.succeed("App.json configuration updated");
+    appJsonSpinner.succeed(chalk.green("App configuration updated"));
   } catch (error) {
-    appJsonSpinner.fail("Failed to update app.json configuration");
+    appJsonSpinner.fail(chalk.red("Failed to update app configuration"));
     throw error;
   }
 }

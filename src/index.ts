@@ -22,6 +22,7 @@ program
   .option('--npm', 'Use npm as package manager')
   .option('--yarn', 'Use yarn as package manager')
   .option('--pnpm', 'Use pnpm as package manager')
+  .option('--bun', 'Use bun as package manager')
   .option('--no-install', 'Skip installing dependencies')
   .option('--no-git', 'Skip git initialization')
   .action(async (projectName: string | undefined, options: any) => {

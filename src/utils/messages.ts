@@ -10,36 +10,54 @@ export function displaySuccess(
     npm: "npm start",
     yarn: "yarn start",
     pnpm: "pnpm start",
+    bun: "bun start",
   };
 
-  console.log(chalk.green("\n✔ Success! Your Expo app is ready.\n"));
+  console.log("");
+  console.log(chalk.bold.green("Success! Your Expo app is ready"));
+  console.log("");
 
-  console.log(chalk.cyan("Next steps:\n"));
-  console.log(chalk.white(`  cd ${projectName}`));
-  console.log(chalk.white(`  ${commands[packageManager]}\n`));
+  console.log(chalk.bold("Get Started"));
+  console.log(chalk.dim("────────────────────────────────────────"));
+  if (projectName !== ".") {
+    console.log(chalk.white(`  cd ${projectName}`));
+  }
+  console.log(chalk.white(`  ${commands[packageManager]}`));
+  console.log("");
 
   if (withNativeWind) {
-    console.log(chalk.yellow("📱 NativeWind is configured and ready to use!"));
-    console.log(chalk.gray("   Use Tailwind classes in your components:\n"));
-    console.log(chalk.gray('   <View className="flex-1 bg-blue-500">'));
+    console.log(chalk.bold.hex("#38BDF8")("NativeWind Ready"));
+    console.log(chalk.dim("────────────────────────────────────────"));
+    console.log(chalk.dim("  Use Tailwind classes in your components:"));
+    console.log("");
+    console.log(chalk.dim('  <View className="flex-1 bg-blue-500">'));
     console.log(
-      chalk.gray('     <Text className="text-white text-xl">Hello!</Text>')
+      chalk.dim('    <Text className="text-white text-xl">Hello!</Text>')
     );
-    console.log(chalk.gray("   </View>\n"));
+    console.log(chalk.dim("  </View>"));
+    console.log("");
   }
 
-  console.log(chalk.cyan("📚 Useful resources:"));
+  console.log(chalk.bold("Documentation"));
+  console.log(chalk.dim("────────────────────────────────────────"));
   console.log(
-    chalk.gray(`   Expo docs: ${chalk.underline("https://docs.expo.dev")}`)
+    chalk.dim(`  Expo:       ${chalk.underline("https://docs.expo.dev")}`)
   );
 
   if (withNativeWind) {
     console.log(
-      chalk.gray(
-        `   NativeWind docs: ${chalk.underline("https://www.nativewind.dev")}`
+      chalk.dim(
+        `  NativeWind: ${chalk.underline("https://www.nativewind.dev")}`
+      )
+    );
+    console.log(
+      chalk.dim(
+        `  Tailwind:   ${chalk.underline("https://tailwindcss.com")}`
       )
     );
   }
 
-  console.log(chalk.green("\n🚀 Happy coding!\n"));
+  console.log("");
+  console.log(chalk.bold.green("Happy coding!"));
+  console.log("");
 }

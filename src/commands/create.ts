@@ -5,7 +5,11 @@ import path from "path";
 import fs from "fs-extra";
 import validateNpmPackageName from "validate-npm-package-name";
 import { detectPackageManager } from "../utils/packageManager";
-import { runCommand, runCommandWithInput } from "../utils/command";
+import {
+  runCommand,
+  runCommandWithInput,
+  runCommandWithCollapsibleOutput,
+} from "../utils/command";
 import { setupNativeWind } from "../utils/nativewind";
 import { createGitRepository } from "../utils/git";
 import { displaySuccess } from "../utils/messages";
@@ -38,7 +42,7 @@ export async function createExpoApp(
   projectName: string | undefined,
   options: CreateOptions
 ) {
-  console.log(chalk.cyan("\n🚀 Create Expo NativeWind App\n"));
+  console.log(chalk.bold.hex("#4F46E5")("\nLet's create your Expo app\n"));
 
   // Get project name
   let name = projectName;
@@ -47,7 +51,7 @@ export async function createExpoApp(
       {
         type: "input",
         name: "projectName",
-        message: "What is your project name?",
+        message: chalk.bold("What is your project name?"),
         default: "my-expo-app",
         validate: (input: string) => {
           // Allow '.' for current directory
@@ -79,7 +83,13 @@ export async function createExpoApp(
 
   // Check if directory already exists (only for non-current directory)
   if (!isCurrentDir && (await fs.pathExists(projectPath))) {
-    console.error(chalk.red(`\n✖ Directory "${name}" already exists!`));
+    console.error(
+      chalk.red.bold("\n  Error: ") +
+        chalk.red(`Directory "${name}" already exists!`)
+    );
+    console.log(
+      chalk.dim("\n  Please choose a different name or remove the existing directory.\n")
+    );
     process.exit(1);
   }
 
@@ -95,12 +105,14 @@ export async function createExpoApp(
         {
           type: "confirm",
           name: "continue",
-          message: "Current directory is not empty. Continue anyway?",
+          message: chalk.bold(
+            "Current directory is not empty. Continue anyway?"
+          ),
           default: false,
         },
       ]);
       if (!confirm.continue) {
-        console.log(chalk.yellow("\nOperation cancelled."));
+        console.log(chalk.yellow("\n  Operation cancelled by user.\n"));
         process.exit(0);
       }
     }
@@ -111,7 +123,7 @@ export async function createExpoApp(
     {
       type: "input",
       name: "expoVersion",
-      message: "Which version of Expo would you like to use?",
+      message: chalk.bold("Which version of Expo would you like to use?"),
       default: "latest",
       validate: (input: string) => {
         if (!input.trim()) {
@@ -131,8 +143,9 @@ export async function createExpoApp(
       {
         type: "confirm",
         name: "useNativeWind",
-        message:
-          "Would you like to setup NativeWind (TailwindCSS for React Native)?",
+        message: chalk.bold(
+          "Would you like to setup NativeWind (TailwindCSS for React Native)?"
+        ),
         default: true,
       },
     ]);
@@ -149,7 +162,7 @@ export async function createExpoApp(
       {
         type: "list",
         name: "template",
-        message: "Choose an Expo template:",
+        message: chalk.bold("Choose an Expo template:"),
         choices: [
           { name: "Blank - A minimal app", value: "blank" },
           {
@@ -168,48 +181,69 @@ export async function createExpoApp(
     template = templateAnswer.template;
   }
 
-  console.log(chalk.gray("\nConfiguration:"));
-  console.log(chalk.gray(`  Project name: ${displayName}`));
+  console.log("");
+  console.log(chalk.dim("  Configuration"));
+  console.log(chalk.dim("  ────────────────────────────────────────"));
+  console.log(chalk.dim(`  Project:         ${displayName}`));
   console.log(
-    chalk.gray(
-      `  Location: ${isCurrentDir ? "Current directory" : projectPath}`
+    chalk.dim(
+      `  Location:        ${isCurrentDir ? "Current directory" : projectPath}`
     )
   );
-  console.log(chalk.gray(`  Package manager: ${packageManager}`));
+  console.log(chalk.dim(`  Package Manager: ${packageManager}`));
   console.log(
-    chalk.gray(
-      `  Template: ${useNativeWind ? "Default Expo (with NativeWind)" : template}`
+    chalk.dim(
+      `  Template:        ${useNativeWind ? "Default Expo (with NativeWind)" : template}`
     )
   );
-  console.log(chalk.gray(`  NativeWind: ${useNativeWind ? "Yes" : "No"}\n`));
+  console.log(
+    chalk.dim(`  NativeWind:      ${useNativeWind ? "Yes" : "No"}`)
+  );
+  console.log(chalk.dim("  ────────────────────────────────────────"));
+  console.log("");
 
   // Create Expo app
-  const spinner = ora("Creating Expo app...").start();
+  const spinner = ora({
+    text: chalk.bold("Creating Expo project..."),
+    color: "blue",
+  }).start();
   try {
     const expoPackage =
       expoVersion === "latest"
         ? "create-expo-app@latest"
         : `create-expo-app@${expoVersion}`;
 
+    spinner.stop();
+
     if (useNativeWind) {
       // For NativeWind setup, use default Expo installation (no template specified)
-      await runCommand("npx", [expoPackage, name], process.cwd());
+      await runCommandWithCollapsibleOutput(
+        "npx",
+        [expoPackage, name],
+        process.cwd(),
+        "Installing Expo dependencies..."
+      );
     } else {
       // For non-NativeWind setup, use specified template
-      await runCommand(
+      await runCommandWithCollapsibleOutput(
         "npx",
         [expoPackage, name, "--template", template],
-        process.cwd()
+        process.cwd(),
+        "Installing Expo dependencies..."
       );
     }
-    spinner.succeed("Expo app created successfully");
+
+    console.log(chalk.green("\n  ✓ Expo project created successfully\n"));
   } catch (error) {
-    spinner.fail("Failed to create Expo app");
+    console.log(chalk.red("\n  ✗ Failed to create Expo project\n"));
     throw error;
   }
 
   // Run reset-project script
-  const resetSpinner = ora("Running reset-project script...").start();
+  const resetSpinner = ora({
+    text: chalk.bold("Cleaning up project template..."),
+    color: "blue",
+  }).start();
   try {
     // Check if reset-project script exists in package.json
     const packageJsonPath = path.join(projectPath, "package.json");
@@ -226,37 +260,46 @@ export async function createExpoApp(
             ? "npm"
             : packageManager === "yarn"
               ? "yarn"
-              : "pnpm",
+              : packageManager === "bun"
+                ? "bun"
+                : "pnpm",
           packageManager === "npm"
             ? ["run", "reset-project"]
             : packageManager === "yarn"
               ? ["reset-project"]
-              : ["reset-project"],
+              : packageManager === "bun"
+                ? ["run", "reset-project"]
+                : ["reset-project"],
           projectPath,
           "n\n"
         );
-        resetSpinner.succeed("Reset project script executed successfully");
+        resetSpinner.succeed(chalk.green("Project template cleaned up"));
       } else {
-        resetSpinner.info("No reset-project script found, skipping...");
+        resetSpinner.info(
+          chalk.dim("No cleanup script found, continuing...")
+        );
       }
     } else {
-      resetSpinner.info("Package.json not found, skipping reset-project...");
+      resetSpinner.info(chalk.dim("No package.json found, skipping cleanup"));
     }
   } catch (error) {
-    resetSpinner.warn("Could not run reset-project script");
+    resetSpinner.warn(chalk.yellow("Could not run cleanup script"));
     console.log(
-      chalk.yellow("  You may need to run it manually: npm run reset-project")
+      chalk.dim("  You may need to run it manually: npm run reset-project")
     );
   }
 
   // Create global.css in app folder for NativeWind (after reset-project)
   if (useNativeWind) {
-    const cssSpinner = ora("Creating global.css in app folder...").start();
+    const cssSpinner = ora({
+      text: chalk.bold("Setting up global styles..."),
+      color: "blue",
+    }).start();
     try {
       await createInitialGlobalCSS(projectPath);
-      cssSpinner.succeed("Global CSS file created");
+      cssSpinner.succeed(chalk.green("Global styles configured"));
     } catch (error) {
-      cssSpinner.fail("Failed to create global.css");
+      cssSpinner.fail(chalk.red("Failed to create global styles"));
       throw error;
     }
   }
@@ -268,12 +311,15 @@ export async function createExpoApp(
 
   // Initialize git repository
   if (options.git !== false) {
-    const gitSpinner = ora("Initializing git repository...").start();
+    const gitSpinner = ora({
+      text: chalk.bold("Initializing git repository..."),
+      color: "blue",
+    }).start();
     try {
       await createGitRepository(projectPath);
-      gitSpinner.succeed("Git repository initialized");
+      gitSpinner.succeed(chalk.green("Git repository initialized"));
     } catch (error) {
-      gitSpinner.warn("Could not initialize git repository");
+      gitSpinner.warn(chalk.yellow("Could not initialize git repository"));
     }
   }
 
