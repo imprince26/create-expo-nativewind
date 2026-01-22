@@ -4,8 +4,9 @@ export interface CreateOptions {
   npm?: boolean;
   yarn?: boolean;
   pnpm?: boolean;
+  bun?: boolean;
   install?: boolean;
   git?: boolean;
 }
 
-export type PackageManager = 'npm' | 'yarn' | 'pnpm';
+export type PackageManager = 'npm' | 'yarn' | 'pnpm' | 'bun';
