@@ -20,8 +20,8 @@ export async function setupNativeWind(
       packageManager,
       [
         "nativewind@^4.0.1",
-        "react-native-reanimated@~3.17.4",
-        "react-native-safe-area-context@5.4.0",
+        // "react-native-reanimated@~3.17.4",
+        // "react-native-safe-area-context@5.4.0",
       ],
       false,
       true
