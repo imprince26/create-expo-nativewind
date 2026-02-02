@@ -4,7 +4,7 @@ import ora from "ora";
 import path from "path";
 import fs from "fs-extra";
 import validateNpmPackageName from "validate-npm-package-name";
-import { detectPackageManager } from "../utils/packageManager";
+import { detectPackageManager, getPackageManagerRunner } from "../utils/packageManager";
 import {
   runCommandWithInput,
   runCommandWithMessage,
@@ -148,33 +148,9 @@ export async function createExpoApp(
   // Ask about dependency installation if not specified via flag
   let shouldInstallDeps = true; // Default to true
   
-  // Only skip prompt if user explicitly passed --no-install flag
+  // Only skip if user explicitly passed --no-install flag
   if (options.install === false) {
     shouldInstallDeps = false;
-  } else if (options.install === undefined) {
-    // If no flag was provided, ask the user
-    const installAnswer = await inquirer.prompt([
-      {
-        type: "confirm",
-        name: "installDependencies",
-        message: chalk.bold(
-          "Would you like to install dependencies automatically? (Recommended)"
-        ),
-        default: true,
-      },
-    ]);
-    shouldInstallDeps = installAnswer.installDependencies;
-    
-    // Show message if user chose not to install
-    if (!shouldInstallDeps) {
-      console.log(
-        chalk.dim(
-          "\n  You can install dependencies manually later using: " +
-            chalk.white(`${packageManager} install`) +
-            "\n"
-        )
-      );
-    }
   }
 
   // Select template if NativeWind is not used
@@ -250,7 +226,7 @@ export async function createExpoApp(
     if (useNativeWind) {
       // For NativeWind setup, use default Expo installation (no template specified)
       await runCommandWithMessage(
-        "npx",
+        getPackageManagerRunner(packageManager),
         createArgs,
         process.cwd(),
         "Creating Expo project with default template"
@@ -258,7 +234,7 @@ export async function createExpoApp(
     } else {
       // For non-NativeWind setup, use specified template
       await runCommandWithMessage(
-        "npx",
+        getPackageManagerRunner(packageManager),
         [...createArgs, "--template", template],
         process.cwd(),
         `Creating Expo project with ${template} template`

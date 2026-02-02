@@ -26,7 +26,7 @@ A powerful CLI tool to quickly scaffold Expo applications with optional NativeWi
 - **NativeWind v4 Support** - Optional TailwindCSS integration with modern architecture
 - **Flexible Installation** - Create new projects or install in current directory
 - **Multiple Package Managers** - Automatic detection and support for npm, yarn, pnpm, and bun
-- **Smart Dependency Management** - Choose automatic or manual dependency installation
+- **Smart Dependency Management** - Automatic dependency installation with `--no-install` override
 - **Template Selection** - Pick from multiple Expo templates when not using NativeWind
 - **Auto-Configuration** - Babel, Metro, TypeScript, and Tailwind configs set up automatically
 - **Git Integration** - Automatic repository initialization with sensible defaults
@@ -147,12 +147,7 @@ When you run the CLI without all required options, it enters interactive mode wi
    - Would you like to set up NativeWind?
    - Default: `Yes`
 
-4. **Dependency Installation** (Recommended)
-   - Choose automatic or manual installation
-   - Shows package manager-specific install command if skipped
-   - Default: `Yes` (automatic)
-
-5. **Template Selection** (only if not using NativeWind)
+4. **Template Selection** (only if not using NativeWind)
    - Pick from available Expo templates
    - Default: `blank-typescript`
 

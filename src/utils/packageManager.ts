@@ -52,6 +52,16 @@ export async function installDependencies(
   await runCommand(packageManager, commands[packageManager], projectPath);
 }
 
+export function getPackageManagerRunner(packageManager: PackageManager): string {
+  const runners: Record<PackageManager, string> = {
+    npm: "npx",
+    yarn: "yarn dlx",
+    pnpm: "pnpx",
+    bun: "bunx",
+  };
+  return runners[packageManager];
+}
+
 export async function addDependencies(
   projectPath: string,
   packageManager: PackageManager,

@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.3] - 2026-02-02
+
+### Fixed
+
+- **Package Manager Commands**: Fixed hardcoded "npx" to use correct package manager runner (npx for npm, pnpx for pnpm, yarn dlx for yarn, bunx for bun) when creating Expo projects
+
+### Changed
+
+- **Dependency Installation**: Removed interactive dependency installation prompt. Now automatically installs dependencies unless `--no-install` flag is explicitly passed
+
 ## [1.1.0] - 2025-10-01
 
 ### Added
